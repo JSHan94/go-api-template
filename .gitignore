@@ -1,0 +1,8 @@
+# Ignored files and directories #
+#################################
+*.log
+.env
+*.bak
+.vscode
+
+docs
