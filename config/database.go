@@ -24,7 +24,7 @@ func database() *DatabaseConfig {
 
 	env()
 
-	// if OPENSEARCH_ENDPOINTS is unset, opensearch client will try with OPENSEARCH_URL
+	// if OPENSEARCH_ENDPOINTS is unset, opensearch client will try with OPENSEARCH_ENDPOINTS
 	// the name of 'OPENSEARCH_ENDPOINTS' is for a sense of unity with other environmental variables.
 	addrs := strings.Split(os.Getenv("OPENSEARCH_ENDPOINTS"), ",")
 
@@ -59,11 +59,12 @@ func database() *DatabaseConfig {
 			//Signer:                nil,
 			//CACert:                []byte{},
 			//RetryOnStatus:         []int{},
-			DisableRetry:         false,
-			EnableRetryOnTimeout: true, // default:true
-			MaxRetries:           3,    // default:0
+			DisableRetry:         false, // default:false
+			EnableRetryOnTimeout: false, // default:false
+
+			MaxRetries: 3, // default:3
 			//CompressRequestBody:   false,
-			DiscoverNodesOnStart: true, // default:false
+			// DiscoverNodesOnStart: false, // default:false
 			//DiscoverNodesInterval: 0,
 			EnableMetrics: true, // default:false
 			//EnableDebugLogger:     false,

@@ -1,78 +1,66 @@
 package handler
 
 import (
-	"fmt"
+	"errors"
 
 	gdatabase "github.com/initia-labs/initia-apis/database"
 	gmodel "github.com/initia-labs/initia-apis/database/model"
-	"github.com/sirupsen/logrus"
 )
 
 func GetBlock(indexName string, params GetBlockQueryParameter) (*gmodel.CollectedBlock, error) {
 	client := gdatabase.GetClient()
-
-	query := fmt.Sprintf(`{
-		"query": {
-			"bool" : {
-				"must" : {"match" : {"block.header.height" : %s}}
-			}
-		},
-		"_source": ["block_id", "block", "reward"]
-	}`, params.Height)
+	query := GetBlockQuery(params)
 
 	hits, err := client.Search(indexName, query)
 	if err != nil {
-		logrus.Error("Error getting %s response: %s", query, err)
 		return nil, err
 	}
 
 	collectedBlock := &gmodel.CollectedBlock{}
-	for _, hit := range hits {
-		source := hit.(map[string]interface{})["_source"]
-		if err := Decode(source.(map[string]interface{}), &collectedBlock); err != nil {
-			logrus.Error("Error decoding block", err)
-			return nil, err
-		}
-	}
+	err = DecodeOne(hits, collectedBlock)
 
-	return collectedBlock, nil
+	return collectedBlock, err
 }
 
-func GetBlocks(indexName string, params GetBlocksQueryParameter) (*gmodel.CollectedBlocks, error) {
+func GetBlockAvgTime(indexName string, params GetBlockAvgTimeQueryParameter) (*gmodel.BlockAvgTime, error) {
 	client := gdatabase.GetClient()
-
-	// FIXME : https://guiyomi.tistory.com/18 (Field data type)
-	query := fmt.Sprintf(`{
-		"query": {
-			"range" : {
-				"block.header.height" : {
-					"gte" : %s,
-					"lte" : %s
-				}
-			}
-		},
-		"sort" : [
-			{"block.header.heigh" : {"order" : "desc"}}
-	   	],	
-		"_source": ["block_id", "block", "reward"]
-	}`, params.From, params.To)
+	query := GetBlockAvgTimeQuery(params)
 
 	hits, err := client.Search(indexName, query)
 	if err != nil {
-		logrus.Error("Error getting %s response: %s", query, err)
 		return nil, err
 	}
 
-	collectedBlocks := &gmodel.CollectedBlocks{}
-	for _, hit := range hits {
-		source := hit.(map[string]interface{})["_source"]
-		collectedBlock := &gmodel.CollectedBlock{}
-		if err := Decode(source.(map[string]interface{}), &collectedBlock); err != nil {
-			logrus.Error(err)
-			return nil, err
-		}
-		collectedBlocks.Blocks = append(collectedBlocks.Blocks, collectedBlock)
+	blockNum := len(hits) - 1
+	if blockNum == 0 {
+		return nil, errors.New("not enough blocks to calculate average block time")
 	}
 
-	return collectedBlocks, nil
+	var collectedBlocks []gmodel.CollectedBlocks
+	if err := DecodeMany(hits, &collectedBlocks); err != nil {
+		return nil, err
+	}
+
+	startBlock := collectedBlocks[0]
+	endBlock := collectedBlocks[blockNum]
+	interval := endBlock.CollectedBlock.Block.Header.Time.Sub(startBlock.CollectedBlock.Block.Header.Time)
+	avgBlockTime := float32(interval.Seconds()) / float32(blockNum)
+
+	return &gmodel.BlockAvgTime{
+		AvgTime: avgBlockTime,
+	}, nil
+}
+
+func GetBlocks(indexName string, params GetBlocksQueryParameter) ([]gmodel.CollectedBlocks, error) {
+	client := gdatabase.GetClient()
+	query := GetBlocksQuery(params)
+
+	hits, err := client.Search(indexName, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var collectedBlocks []gmodel.CollectedBlocks
+	err = DecodeMany(hits, &collectedBlocks)
+	return collectedBlocks, err
 }

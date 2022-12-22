@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"time"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	tm "github.com/tendermint/tendermint/types"
 )
 
+// FIXME: use archiver indexer/collector/types.go
 type BlockReward struct {
 	Reward           string
 	Commission       string
@@ -18,36 +19,49 @@ type BlockReward struct {
 type CollectedBlock struct {
 	BlockID *tm.BlockID `json:"block_id" swaggertype:"object"`
 	Block   *tm.Block   `json:"block" swaggertype:"object"`
-	Reward  BlockReward `json:"reward"`
 }
 
 type CollectedBlocks struct {
-	Blocks []*CollectedBlock `json:"blocks"`
+	ID             string         `json:"_id"`
+	Index          string         `json:"_index"`
+	Score          string         `json:"_score"`
+	CollectedBlock CollectedBlock `json:"_source"`
 }
 
 type CollectedTxs struct {
-	Txs []*CollectedTx `json:"txs"`
+	ID          string      `json:"_id"`
+	Index       string      `json:"_index"`
+	Score       string      `json:"_score"`
+	CollectedTx CollectedTx `json:"_source"`
 }
 
 type CollectedTx struct {
-	Tx         json.RawMessage `json:"tx"`
-	TxResponse json.RawMessage `json:"tx_response"`
+	Tx         json.RawMessage `json:"tx" swaggertype:"string"`
+	TxResponse json.RawMessage `json:"tx_response" swaggertype:"string"`
 	Code       uint32          `json:"code"`
 	Codespace  string          `json:"codespace"`
 	GasUsed    int64           `json:"gas_used"`
 	GasWanted  int64           `json:"gas_wanted"`
 	Height     int64           `json:"height"`
 	RawLog     string          `json:"raw_log"`
-	Logs       json.RawMessage `json:"logs"`
+	Logs       json.RawMessage `json:"logs" swaggertype:"string"`
 	TxHash     string          `json:"txhash"`
-	Timestamp  time.Time       `json:"timestamp"`
+	Timestamp  time.Time       `json:"timestamp" swaggertype:"string"`
 	Sender     string          `json:"sender"`
+	Order      uint            `json:"order"` // tx index in a block
 }
 
 type CollectedEvents struct {
-	BeginBlock *abci.ResponseBeginBlock  `json:"begin_block"`
-	EndBlock   *abci.ResponseEndBlock    `json:"end_block"`
-	DeliverTxs []*abci.ResponseDeliverTx `json:"deliver_txs"`
+	Type       string               `json:"type"`
+	Attributes []CollectedAttribute `json:"attributes"`
+	Height     int64                `json:"height"`
+	Timestamp  time.Time            `json:"timestamp"`
+}
+
+type CollectedAttribute struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+	Index bool   `json:"index"`
 }
 
 type CollectedNetwork struct {
@@ -68,4 +82,17 @@ type CollectedGeneral struct {
 type TxRecord struct {
 	Tx         json.RawMessage `json:"tx"`
 	TxResponse json.RawMessage `json:"tx_response"`
+}
+
+type CollectedAppendix struct {
+	indexBytes      []byte             // internal use only
+	StakingRatio    sdk.Dec            `json:"staking_ratio"`
+	Issuances       sdk.Coins          `json:"issuances"`
+	CommunityPool   sdk.DecCoins       `json:"community_pool"`
+	BondedTokens    sdk.Coin           `json:"bonded_tokens"`
+	NotBondedTokens sdk.Coin           `json:"not_bonded_tokens"`
+	Reward          BlockReward        `json:"reward"`
+	Network         []CollectedNetwork `json:"network"`
+	Height          int64              `json:"height"`
+	Timestamp       time.Time          `json:"timestamp"`
 }

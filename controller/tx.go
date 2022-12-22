@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	gdatabase "github.com/initia-labs/initia-apis/database"
+	gconfig "github.com/initia-labs/initia-apis/config"
 	gmodel "github.com/initia-labs/initia-apis/database/model"
 	ghandler "github.com/initia-labs/initia-apis/handler"
 	tm "github.com/tendermint/tendermint/types"
@@ -15,6 +15,17 @@ var _ = &gmodel.CollectedTx{}
 var _ = &gmodel.CollectedTxs{}
 var _ = &tm.BlockID{}
 var _ = &tm.Block{}
+
+// @Summary Get a tx
+// @Description Get a transaction matching with given hash
+// @Accept  json
+// @Produce  json
+// @Param  hash	query	string	true	"Transaction hash"
+// @Success 200 {object} gmodel.CollectedTx "a transaction"
+// @Router /v1/tx [get]
+func GetTx(c *gin.Context) {
+	panic("not implemented yet")
+}
 
 // @Summary Get txs
 // @Description Get transactions matching with given params
@@ -43,7 +54,7 @@ func GetTxs(c *gin.Context) {
 		return
 	}
 
-	txIndexName := gdatabase.IDX_TX_BASIC
+	txIndexName := gconfig.IDX_TX_BASIC
 	// check query.account is empty
 	if params.Account != "" {
 		ghandler.GetTxsByAccount(txIndexName, params)
@@ -59,10 +70,15 @@ func GetTxs(c *gin.Context) {
 // @Description Get minimum gas price
 // @Accept  json
 // @Produce  json
-// @Success 200 {obejct} gmodel.GasPrice "uinit gas price"
+// @Success 200 {obejct} gmodel.GasPrice "uinit minimum gas price"
 // @Router /v1/txs/gasprice [get]
 func GetGasPrice(c *gin.Context) {
-	panic("not implemented yet")
+	// FIXME: Don't hardcode gas price
+	gasPrice := gmodel.GasPrice{
+		Denom: "uinit",
+		Value: "5.0",
+	}
+	c.JSON(http.StatusOK, gasPrice)
 }
 
 // @Summary Get mempool transaction
@@ -71,7 +87,7 @@ func GetGasPrice(c *gin.Context) {
 // @Produce  json
 // @Param  txhash  query  string  true  "Transaction hash"
 // @Success 200 {obejct} gmodel.MempoolTransaction "Mempool transaction"
-// @Router /v1/mempool/tx [get]
+// @Router /v1/tx/mempool [get]
 func GetMempoolTx(c *gin.Context) {
 	panic("not implemented yet")
 }
@@ -82,7 +98,7 @@ func GetMempoolTx(c *gin.Context) {
 // @Produce  json
 // @Param  account  query  string  false  "Account address"
 // @Success 200 {obejct} gmodel.MempoolTransactions "Mempool transactions"
-// @Router /v1/mempool/txs [get]
+// @Router /v1/txs/mempool [get]
 func GetMempoolTxs(c *gin.Context) {
 	panic("not implemented yet")
 }

@@ -5,4 +5,5 @@
 *.bak
 .vscode
 
-docs
+docs/
+build/
