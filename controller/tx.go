@@ -22,48 +22,69 @@ var _ = &tm.Block{}
 // @Produce  json
 // @Param  hash	query	string	true	"Transaction hash"
 // @Success 200 {object} gmodel.CollectedTx "a transaction"
-// @Router /v1/tx [get]
-func GetTx(c *gin.Context) {
-	panic("not implemented yet")
+// @Router /v1/tx/:hash [get]
+func GetTxByHash(c *gin.Context) {
+	tx, err := ghandler.GetTxByHash(c, gconfig.IDX_TX_BASIC)
+	if err != nil {
+		AbortWithStatusJSON(c, err)
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, tx)
 }
 
 // @Summary Get txs
-// @Description Get transactions matching with given params
+// @Description Get transactions related with given account address
 // @Accept  json
 // @Produce  json
-// @Param  account	query	string	false	"Sender account address"
-// @Param  block  query  int  false  "Block height"
-// @Param  chainid  query  string  false  "Chain ID"
 // @Param  limit  query  int  false  "Items per page (default: 10)"
-// @Param  offset  query  int  false  "Offset"
+// @Param  order  query  string  false  "desc or asc (default: desc)"
 // @Success 200 {object} gmodel.CollectedTxs "List of transactions"
-// @Router /v1/txs [get]
-func GetTxs(c *gin.Context) {
-	var params ghandler.GetTxsQueryParameter
-	if err := c.ShouldBindQuery(&params); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
+// @Router /v1/txs/account/:account [get]
+func GetTxsByAccount(c *gin.Context) {
+	txs, err := ghandler.GetTxsByAccount(c, gconfig.IDX_TX_BASIC)
+	if err != nil {
+		AbortWithStatusJSON(c, err)
 		return
 	}
 
-	if params == (ghandler.GetTxsQueryParameter{}) {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "need to provide at least one query parameter (account or height or offset)",
-		})
+	c.IndentedJSON(http.StatusOK, txs)
+}
+
+// @Summary Get txs
+// @Description Get transactions from given offset
+// @Accept  json
+// @Produce  json
+// @Param  limit  query  int  false  "Items per page (default: 10)"
+// @Param  order  query  string  false  "desc or asc (default: desc)"
+// @Success 200 {object} gmodel.CollectedTxs "List of transactions"
+// @Router /v1/txs/offset/:offset [get]
+func GetTxsByOffset(c *gin.Context) {
+	txs, err := ghandler.GetTxsByOffset(c, gconfig.IDX_TX_BASIC)
+	if err != nil {
+		AbortWithStatusJSON(c, err)
 		return
 	}
 
-	txIndexName := gconfig.IDX_TX_BASIC
-	// check query.account is empty
-	if params.Account != "" {
-		ghandler.GetTxsByAccount(txIndexName, params)
-	} else if params.Height != "" {
-		ghandler.GetTxsByHeight(txIndexName, params)
-	} else {
-		ghandler.GetTxsByOffset(txIndexName, params)
+	c.IndentedJSON(http.StatusOK, txs)
+}
+
+// @Summary Get txs
+// @Description Get transactions
+// @Accept  json
+// @Produce  json
+// @Param  limit  query  int  false  "Items per page (default: 10)"
+// @Param  order  query  string  false  "desc or asc (default: desc)"
+// @Success 200 {object} gmodel.CollectedTxs "List of transactions"
+// @Router /v1/txs/height/:height [get]
+func GetTxsByHeight(c *gin.Context) {
+	txs, err := ghandler.GetTxsByHeight(c, gconfig.IDX_TX_BASIC)
+	if err != nil {
+		AbortWithStatusJSON(c, err)
+		return
 	}
 
+	c.IndentedJSON(http.StatusOK, txs)
 }
 
 // @Summary Get gas price

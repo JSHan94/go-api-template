@@ -20,7 +20,7 @@ func activateAPI(engine *gin.Engine) {
 	{
 		block := v1.Group("/block")
 		{
-			block.GET("", gcontroller.GetBlock)
+			block.GET("/:height", gcontroller.GetBlockByHeight)
 			block.GET("/avgtime", gcontroller.GetBlockAvgTime)
 		}
 
@@ -31,13 +31,16 @@ func activateAPI(engine *gin.Engine) {
 
 		tx := v1.Group("/tx")
 		{
-			tx.GET("", gcontroller.GetBlock)
+			tx.GET("/:hash", gcontroller.GetTxByHash)
 			tx.GET("/mempool", gcontroller.GetMempoolTx)
 		}
 
 		txs := v1.Group("/txs")
 		{
-			txs.GET("", gcontroller.GetTxs)
+			txs.GET("/height/:height", gcontroller.GetTxsByHeight)
+			txs.GET("/account/:account", gcontroller.GetTxsByAccount)
+			txs.GET("/offset/:offset", gcontroller.GetTxsByOffset)
+
 			txs.GET("/mempool", gcontroller.GetMempoolTxs)
 			txs.GET("/gasprice", gcontroller.GetGasPrice)
 		}

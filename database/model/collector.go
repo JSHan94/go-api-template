@@ -22,17 +22,15 @@ type CollectedBlock struct {
 }
 
 type CollectedBlocks struct {
-	ID             string         `json:"_id"`
-	Index          string         `json:"_index"`
-	Score          string         `json:"_score"`
-	CollectedBlock CollectedBlock `json:"_source"`
+	From   string            `json:"from"`
+	To     string            `json:"to"`
+	Blocks []*CollectedBlock `json:"blocks"`
 }
 
 type CollectedTxs struct {
-	ID          string      `json:"_id"`
-	Index       string      `json:"_index"`
-	Score       string      `json:"_score"`
-	CollectedTx CollectedTx `json:"_source"`
+	Limit  string         `json:"limit"`
+	Offset string         `json:"offset"`
+	Txs    []*CollectedTx `json:"txs"`
 }
 
 type CollectedTx struct {
@@ -47,8 +45,8 @@ type CollectedTx struct {
 	Logs       json.RawMessage `json:"logs" swaggertype:"string"`
 	TxHash     string          `json:"txhash"`
 	Timestamp  time.Time       `json:"timestamp" swaggertype:"string"`
-	Sender     string          `json:"sender"`
-	Order      uint            `json:"order"` // tx index in a block
+	Index      uint            `json:"index"`    // tx order in a block
+	Sequence   uint64          `json:"sequence"` // sequence of whole txs, not sender's sequence
 }
 
 type CollectedEvents struct {

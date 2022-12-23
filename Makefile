@@ -2,7 +2,7 @@ BUILDDIR ?= $(CURDIR)/build
 DOCSDIR ?= $(CURDIR)/docs
 BINARY_NAME = initia-apis
 
-all: clean docs test build run
+all: clean docs build run
 
 build:
 	@go build -o build/${BINARY_NAME} main.go

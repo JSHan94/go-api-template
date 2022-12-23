@@ -2,20 +2,18 @@ package handler
 
 import (
 	"fmt"
+
+	"github.com/gin-gonic/gin"
 )
 
-// Block params
-type GetBlockQueryParameter struct {
-	Height string `form:"height" binding:"required,gte=1"`
-}
-
 type GetBlocksQueryParameter struct {
-	From string `form:"from" binding:"required,gte=1"`
-	To   string `form:"to" binding:"required,gte=1"`
+	From  string `form:"from" binding:"required,gte=1"`
+	To    string `form:"to" binding:"required,gte=1"`
+	Order string `form:"order"`
 }
 
 type GetBlockAvgTimeQueryParameter struct {
-	Height string `form:"height,gte=1"`
+	Height string `form:"height" binding:"gte=2"`
 }
 
 // Transaction params
@@ -24,15 +22,14 @@ type GetTxQueryParameter struct {
 }
 
 type GetTxsQueryParameter struct {
-	Account string `form:"account"`
-	Height  string `form:"height"`
-	ChainId string `form:"chainid"`
-	Offset  string `form:"offset"`
-	Limit   string `form:"limit"`
+	Limit string `form:"limit"`
+	Order string `form:"order"`
 }
 
 // block.go queries
-func GetBlockQuery(params GetBlockQueryParameter) string {
+func GetBlockByHeightQuery(c *gin.Context) (string, error) {
+	height := c.Param("height")
+
 	return fmt.Sprintf(`{
 		"query": {
 			"bool" : {
@@ -40,10 +37,15 @@ func GetBlockQuery(params GetBlockQueryParameter) string {
 			}
 		},
 		"_source": ["block_id", "block"]
-	}`, params.Height)
+	}`, height), nil
 }
 
-func GetBlockAvgTimeQuery(params GetBlockAvgTimeQueryParameter) string {
+func GetBlockAvgTimeQuery(c *gin.Context) (string, error) {
+	var params GetBlockAvgTimeQueryParameter
+	if err := c.ShouldBindQuery(&params); err != nil {
+		return "", err
+	}
+
 	return fmt.Sprintf(`{
 		"query": {
 			"range" : {
@@ -55,10 +57,19 @@ func GetBlockAvgTimeQuery(params GetBlockAvgTimeQueryParameter) string {
 		"size" : 1000,
 		"sort": [{"block.header.height": {"order": "asc"}}],
 		"_source": ["block_id", "block"]
-	}`, params.Height)
+	}`, params.Height), nil
 }
 
-func GetBlocksQuery(params GetBlocksQueryParameter) string {
+func GetBlocksQuery(c *gin.Context) (string, error) {
+	params := &GetBlocksQueryParameter{}
+
+	if err := c.ShouldBindQuery(&params); err != nil {
+		return "", err
+	}
+	if params.Order == "" {
+		params.Order = "desc"
+	}
+
 	return fmt.Sprintf(`{
 		"query": {
 			"range" : {
@@ -69,51 +80,98 @@ func GetBlocksQuery(params GetBlocksQueryParameter) string {
 			}
 		},
 		"sort" : [
-			{"block.header.height" : {"order" : "desc"}}
+			{"block.header.height" : {"order" : "%s"}}
 	   	],	
 		"_source": ["block_id", "block"]
-	}`, params.From, params.To)
+	}`, params.From, params.To, params.Order), nil
 }
 
 // tx.go queries
-func GetTxQuery(params GetTxQueryParameter) string {
+func GetTxByHashQuery(c *gin.Context) (string, error) {
+	hash := c.Param("hash")
 	return fmt.Sprintf(`{
 		"query": {
 			"match" : {
 				"txhash": "%s"
 			}
 		}
-	})`, params.Hash)
+	}`, hash), nil
 }
 
-func GetTxsByOffsetQuery(params GetTxsQueryParameter) string {
+func GetTxsByOffsetQuery(c *gin.Context) (string, error) {
+	offset := c.Param("offset")
+	params := &GetTxsQueryParameter{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		return "", err
+	}
+
+	if params.Order == "" {
+		params.Order = "desc"
+	}
+
+	if params.Limit == "" {
+		params.Limit = "10"
+	}
+
 	return fmt.Sprintf(`{
 		"query": {
 			"match_all" : {}
 		},
-		"sort": [{"height": {"order": "desc"}} , {"order" : {"order": "desc"}}],
+		"sort": [{"sequence": {"order": "%s"}}],
 		"search_after": [%s],
 		"size" : %s
-	})`, params.Offset, params.Limit)
+	}`, params.Order, offset, params.Limit), nil
 }
 
-func GetTxsByAccountQuery(params GetTxsQueryParameter) string {
-	return fmt.Sprintf(`{
-		"query": {
-		}
-	})`)
-}
+func GetTxsByAccountQuery(c *gin.Context) (string, error) {
+	account := c.Param("account")
+	params := &GetTxsQueryParameter{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		return "", err
+	}
 
-func GetTxsByHeightQuery(params GetTxsQueryParameter) string {
+	if params.Order == "" {
+		params.Order = "desc"
+	}
+
+	if params.Limit == "" {
+		params.Limit = "10"
+	}
+
 	return fmt.Sprintf(`{
 		"query": {
-			"range" : {
-				"height" : {
-					"lte" : %s
-				}
+			"multi_match" : {
+				"query" : "%s",
+				"fields" : ["*"]
 			}
 		},
-		"size": %s,
-		"sort": [{"height": {"order": "desc"}} , {"order" : {"order": "desc"}}]
-	})`, params.Height, params.Limit)
+		"sort": [{"sequence": {"order": "%s"}}],
+		"size" : %s
+	}`, account, params.Order, params.Limit), nil
+}
+
+func GetTxsByHeightQuery(c *gin.Context) (string, error) {
+	height := c.Param("height")
+	params := &GetTxsQueryParameter{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		return "", err
+	}
+
+	if params.Order == "" {
+		params.Order = "desc"
+	}
+
+	if params.Limit == "" {
+		params.Limit = "10"
+	}
+
+	return fmt.Sprintf(`{
+		"query": {
+			"match" : {
+				"height": "%s"
+			}
+		},
+		"sort": [{"sequence": {"order": "%s"}}],
+		"size": %s
+	}`, height, params.Order, params.Limit), nil
 }

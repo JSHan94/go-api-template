@@ -3,13 +3,17 @@ package handler
 import (
 	"errors"
 
+	"github.com/gin-gonic/gin"
 	gdatabase "github.com/initia-labs/initia-apis/database"
 	gmodel "github.com/initia-labs/initia-apis/database/model"
 )
 
-func GetBlock(indexName string, params GetBlockQueryParameter) (*gmodel.CollectedBlock, error) {
+func GetBlockByHeight(c *gin.Context, indexName string) (*gmodel.CollectedBlock, error) {
 	client := gdatabase.GetClient()
-	query := GetBlockQuery(params)
+	query, err := GetBlockByHeightQuery(c)
+	if err != nil {
+		return nil, err
+	}
 
 	hits, err := client.Search(indexName, query)
 	if err != nil {
@@ -17,14 +21,17 @@ func GetBlock(indexName string, params GetBlockQueryParameter) (*gmodel.Collecte
 	}
 
 	collectedBlock := &gmodel.CollectedBlock{}
-	err = DecodeOne(hits, collectedBlock)
+	err = DecodeOne(hits[0], collectedBlock)
 
 	return collectedBlock, err
 }
 
-func GetBlockAvgTime(indexName string, params GetBlockAvgTimeQueryParameter) (*gmodel.BlockAvgTime, error) {
+func GetBlockAvgTime(c *gin.Context, indexName string) (*gmodel.BlockAvgTime, error) {
 	client := gdatabase.GetClient()
-	query := GetBlockAvgTimeQuery(params)
+	query, err := GetBlockAvgTimeQuery(c)
+	if err != nil {
+		return nil, err
+	}
 
 	hits, err := client.Search(indexName, query)
 	if err != nil {
@@ -36,14 +43,19 @@ func GetBlockAvgTime(indexName string, params GetBlockAvgTimeQueryParameter) (*g
 		return nil, errors.New("not enough blocks to calculate average block time")
 	}
 
-	var collectedBlocks []gmodel.CollectedBlocks
-	if err := DecodeMany(hits, &collectedBlocks); err != nil {
-		return nil, err
+	var collectedBlocks gmodel.CollectedBlocks
+	for _, hit := range hits {
+		collectedBlock := &gmodel.CollectedBlock{}
+		err = DecodeOne(hit, collectedBlock)
+		if err != nil {
+			return nil, err
+		}
+		collectedBlocks.Blocks = append(collectedBlocks.Blocks, collectedBlock)
 	}
 
-	startBlock := collectedBlocks[0]
-	endBlock := collectedBlocks[blockNum]
-	interval := endBlock.CollectedBlock.Block.Header.Time.Sub(startBlock.CollectedBlock.Block.Header.Time)
+	startBlock := collectedBlocks.Blocks[0]
+	endBlock := collectedBlocks.Blocks[blockNum]
+	interval := endBlock.Block.Header.Time.Sub(startBlock.Block.Header.Time)
 	avgBlockTime := float32(interval.Seconds()) / float32(blockNum)
 
 	return &gmodel.BlockAvgTime{
@@ -51,16 +63,30 @@ func GetBlockAvgTime(indexName string, params GetBlockAvgTimeQueryParameter) (*g
 	}, nil
 }
 
-func GetBlocks(indexName string, params GetBlocksQueryParameter) ([]gmodel.CollectedBlocks, error) {
+func GetBlocks(c *gin.Context, indexName string) (*gmodel.CollectedBlocks, error) {
 	client := gdatabase.GetClient()
-	query := GetBlocksQuery(params)
+	query, err := GetBlocksQuery(c)
+	if err != nil {
+		return nil, err
+	}
 
 	hits, err := client.Search(indexName, query)
 	if err != nil {
 		return nil, err
 	}
 
-	var collectedBlocks []gmodel.CollectedBlocks
-	err = DecodeMany(hits, &collectedBlocks)
+	collectedBlocks := &gmodel.CollectedBlocks{}
+	collectedBlocks.From = c.Param("from")
+	collectedBlocks.To = c.Param("to")
+
+	for _, hit := range hits {
+		collectedBlock := &gmodel.CollectedBlock{}
+		err = DecodeOne(hit, collectedBlock)
+		if err != nil {
+			return nil, err
+		}
+		collectedBlocks.Blocks = append(collectedBlocks.Blocks, collectedBlock)
+	}
+
 	return collectedBlocks, err
 }

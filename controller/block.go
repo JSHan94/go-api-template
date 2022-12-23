@@ -15,16 +15,10 @@ var _ = &gmodel.CollectedBlock{}
 // @Description Get block information for a given height
 // @Accept  json
 // @Produce  json
-// @Param  height  query  int  true  "height"
 // @Success 200 {object} gmodel.CollectedBlock 	"block"
-// @Router /v1/block [get]
-func GetBlock(c *gin.Context) {
-	var params ghandler.GetBlockQueryParameter
-	if err := c.ShouldBindQuery(&params); err != nil {
-		AbortWithStatusJSON(c, err)
-		return
-	}
-	block, err := ghandler.GetBlock(gconfig.IDX_BLOCK_BASIC, params)
+// @Router /v1/block/height/:height [get]
+func GetBlockByHeight(c *gin.Context) {
+	block, err := ghandler.GetBlockByHeight(c, gconfig.IDX_BLOCK_BASIC)
 	if err != nil {
 		AbortWithStatusJSON(c, err)
 		return
@@ -34,20 +28,14 @@ func GetBlock(c *gin.Context) {
 }
 
 // @Summary Get average blocktime
-// @Description Get average time of the last 1000 blocks
+// @Description Get average time of the previous 1000 blocks
 // @Accept  json
 // @Produce  json
-// @Param  height  query  int  false  "request height"
+// @Param  height  query  int  true  "current block height (should be greater than 2)"
 // @Success 200 {object} gmodel.BlockAvgTime 	"average blocktime"
 // @Router /v1/block/avgtime [get]
 func GetBlockAvgTime(c *gin.Context) {
-	var params ghandler.GetBlockAvgTimeQueryParameter
-	if err := c.ShouldBindQuery(&params); err != nil {
-		AbortWithStatusJSON(c, err)
-		return
-	}
-
-	blockAvgTime, err := ghandler.GetBlockAvgTime(gconfig.IDX_BLOCK_BASIC, params)
+	blockAvgTime, err := ghandler.GetBlockAvgTime(c, gconfig.IDX_BLOCK_BASIC)
 	if err != nil {
 		AbortWithStatusJSON(c, err)
 		return
@@ -61,16 +49,12 @@ func GetBlockAvgTime(c *gin.Context) {
 // @Produce  json
 // @Param  from  query  integer  true  "start height"
 // @Param  to  query  integer  true  "end height"
+// @param  order query string  false "desc or asc (default: desc)"
 // @Success 200 {object} gmodel.CollectedBlocks 	"blocks"
 // @Router /v1/blocks [get]
 func GetBlocks(c *gin.Context) {
-	var params ghandler.GetBlocksQueryParameter
-	if err := c.ShouldBindQuery(&params); err != nil {
-		AbortWithStatusJSON(c, err)
-		return
-	}
 
-	blocks, err := ghandler.GetBlocks(gconfig.IDX_BLOCK_BASIC, params)
+	blocks, err := ghandler.GetBlocks(c, gconfig.IDX_BLOCK_BASIC)
 	if err != nil {
 		AbortWithStatusJSON(c, err)
 		return
