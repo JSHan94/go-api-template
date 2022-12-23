@@ -17,7 +17,8 @@ jobs:
           go-version: 1.19
       # for private repo access
       - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
-      - run: go build ./...
+      - name: Build
+        run: make build
 
   test:
     env:
@@ -38,30 +39,5 @@ jobs:
       # for private repo access
       - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - name: Test
+        run: make docs
         run: go test ./...
-
-# Use --check or --exit-code when available (Go 1.19?)
-# https://github.com/golang/go/issues/27005
-  tidy:
-    env:
-      # for private repo access
-      GOPRIVATE: github.com/initia-labs/initiavm
-      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-    runs-on: ubuntu-latest
-    name: tidy
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.19
-      # for private repo access
-      - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
-      - run: |
-          go mod tidy
-          CHANGES_IN_REPO=$(git status --porcelain)
-          if [[ -n "$CHANGES_IN_REPO" ]]; then
-            echo "Repository is dirty. Showing 'git status' and 'git --no-pager diff' for debugging now:"
-            git status && git --no-pager diff
-            exit 1
-          fi
