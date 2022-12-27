@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/opensearch-project/opensearch-go/v2/opensearchapi"
+	"github.com/sirupsen/logrus"
 )
 
 // Search for documents
@@ -21,7 +22,7 @@ func (client Client) Search(indexName string, query string) ([]interface{}, erro
 	}
 	hits := r["hits"].(map[string]interface{})["hits"].([]interface{})
 	if len(hits) == 0 {
-		return nil, errors.New("no hits for query: " + query)
+		return nil, errors.New("no hits for the request")
 	}
 	return hits, err
 }
@@ -34,6 +35,7 @@ func search(client Client, indexName string, query string) (*opensearchapi.Respo
 		client.OSClient.Search.WithBody(content),
 	)
 	if err != nil {
+		logrus.Error("no hits for the request")
 		return nil, err
 	}
 

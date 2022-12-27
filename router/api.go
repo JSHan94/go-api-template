@@ -20,19 +20,23 @@ func activateAPI(engine *gin.Engine) {
 	{
 		block := v1.Group("/block")
 		{
-			block.GET("/:height", gcontroller.GetBlockByHeight)
+			block.GET("/latest", gcontroller.GetBlockLatest)
+			block.GET("/height/:height", gcontroller.GetBlockByHeight)
+			block.GET("/time/:time", gcontroller.GetBlockByTime)
+			block.GET("/hash/:hash", gcontroller.GetBlockByHash)
+
 			block.GET("/avgtime", gcontroller.GetBlockAvgTime)
 		}
 
 		blocks := v1.Group("/blocks")
 		{
-			blocks.GET("", gcontroller.GetBlocks)
+			blocks.GET("", gcontroller.GetBlocksFromTo)
 		}
 
 		tx := v1.Group("/tx")
 		{
 			tx.GET("/:hash", gcontroller.GetTxByHash)
-			tx.GET("/mempool", gcontroller.GetMempoolTx)
+			// tx.GET("/mempool", gcontroller.GetMempoolTx)
 		}
 
 		txs := v1.Group("/txs")
@@ -41,13 +45,20 @@ func activateAPI(engine *gin.Engine) {
 			txs.GET("/account/:account", gcontroller.GetTxsByAccount)
 			txs.GET("/offset/:offset", gcontroller.GetTxsByOffset)
 
-			txs.GET("/mempool", gcontroller.GetMempoolTxs)
+			// txs.GET("/mempool", gcontroller.GetMempoolTxs)
 			txs.GET("/gasprice", gcontroller.GetGasPrice)
 		}
 
-		dashboard := v1.Group("/dashboard")
+		analysis := v1.Group("/analysis")
 		{
-			dashboard.GET("/tx/volume", gcontroller.GetTxVolume)
+			analysis.GET("/tx-volume", gcontroller.GetTxVolume)
+			analysis.GET("/tx-count", gcontroller.GetTxCount)
+
 		}
+
+		// market := v1.Group("/market")
+		// {
+
+		// }
 	}
 }

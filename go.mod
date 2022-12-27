@@ -20,7 +20,6 @@ require github.com/gogo/protobuf v1.3.3 // indirect
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/aquasecurity/esquery v0.2.0 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.17.2 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.7 // indirect
@@ -44,8 +43,6 @@ require (
 	github.com/dgraph-io/ristretto v0.1.0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
-	github.com/elastic/go-elasticsearch/v7 v7.6.0 // indirect
-	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
