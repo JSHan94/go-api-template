@@ -25,12 +25,12 @@ func activateAPI(engine *gin.Engine) {
 			block.GET("/time/:time", gcontroller.GetBlockByTime)
 			block.GET("/hash/:hash", gcontroller.GetBlockByHash)
 
-			block.GET("/avgtime", gcontroller.GetBlockAvgTime)
+			block.GET("/avgtime/:height", gcontroller.GetBlockAvgTime)
 		}
 
 		blocks := v1.Group("/blocks")
 		{
-			blocks.GET("", gcontroller.GetBlocksFromTo)
+			blocks.GET("/:from/:to", gcontroller.GetBlocksFromTo)
 		}
 
 		tx := v1.Group("/tx")
@@ -51,14 +51,8 @@ func activateAPI(engine *gin.Engine) {
 
 		analysis := v1.Group("/analysis")
 		{
-			analysis.GET("/tx-volume", gcontroller.GetTxVolume)
-			analysis.GET("/tx-count", gcontroller.GetTxCount)
-
+			analysis.GET("/tx-volume/:start/:end", gcontroller.GetTxVolume)
+			analysis.GET("/tx-count/:start/:end", gcontroller.GetTxCount)
 		}
-
-		// market := v1.Group("/market")
-		// {
-
-		// }
 	}
 }

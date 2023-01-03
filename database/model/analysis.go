@@ -1,14 +1,14 @@
 package model
 
 type TxVolume struct {
-	From  string `json:"from"`
-	To    string `json:"to"`
+	Start string `json:"start"`
+	End   string `json:"end"`
 	Denom string `json:"denom"`
-	Value string `json:"value"`
+	Value int    `json:"value"`
 }
 
 type TxCount struct {
-	From  string `json:"from"`
-	To    string `json:"to"`
+	Start string `json:"start"`
+	End   string `json:"end"`
 	Value int    `json:"value"`
 }

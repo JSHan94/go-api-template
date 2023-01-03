@@ -4,17 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	glib "github.com/initia-labs/initia-apis/lib"
 )
-
-type GetBlocksQueryParameter struct {
-	From  string `form:"from" binding:"required,gte=1"`
-	To    string `form:"to" binding:"required,gte=1"`
-	Order string `form:"order"`
-}
-
-type GetBlockAvgTimeQueryParameter struct {
-	Height string `form:"height" binding:"gte=2"`
-}
 
 func GetBlockLatestQuery(c *gin.Context) (string, error) {
 	return `{
@@ -24,19 +15,34 @@ func GetBlockLatestQuery(c *gin.Context) (string, error) {
 }
 
 func GetBlockByHeightQuery(c *gin.Context) (string, error) {
-	height := c.Param("height")
+	type GetBlockByHeightPathParameter struct {
+		Height uint `form:"height" uri:"height" binding:"required,gte=1"`
+	}
+
+	path := &GetBlockByHeightPathParameter{}
+	if err := glib.ValidateRequestParameters(c, &path, nil); err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(`{
 		"query": {
 			"match" : {
-				"block.header.height" : %s
+				"block.header.height" : %d
 			}
 		}
-	}`, height), nil
+	}`, path.Height), nil
 }
 
 func GetBlockByTimeQuery(c *gin.Context) (string, error) {
-	height := c.Param("time") //"2022-11-07T16:39:17"
+	type GetBlockByTimePathParameter struct {
+		Time string `uri:"time" binding:"required"`
+	}
+
+	path := &GetBlockByTimePathParameter{}
+
+	if err := glib.ValidateRequestParameters(c, &path, nil); err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(`{
 		"query": {
@@ -48,22 +54,34 @@ func GetBlockByTimeQuery(c *gin.Context) (string, error) {
 		},
 		"sort" : {"block.header.height" : "desc" },
 		"size" : 1
-	}`, height), nil
+	}`, path.Time), nil
 }
 
 func GetBlockByHashQuery(c *gin.Context) (string, error) {
-	hash := c.Param("hash")
+	type GetBlockByHashPathParameter struct {
+		Hash string `uri:"hash" binding:"required"`
+	}
+	path := &GetBlockByHashPathParameter{}
+
+	if err := glib.ValidateRequestParameters(c, &path, nil); err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(`{
 		"query": {
 			"match": {"block_id.hash": "%s"}
 		}
-	}`, hash), nil
+	}`, path.Hash), nil
 }
 
 func GetBlockAvgTimeQuery(c *gin.Context) (string, error) {
-	var params GetBlockAvgTimeQueryParameter
-	if err := c.ShouldBindQuery(&params); err != nil {
+	type GetBlockAvgTimePathParameter struct {
+		Height string `uri:"height" binding:"required,gte=2"`
+	}
+
+	uri := &GetBlockAvgTimePathParameter{}
+
+	if err := glib.ValidateRequestParameters(c, &uri, nil); err != nil {
 		return "", err
 	}
 
@@ -77,17 +95,23 @@ func GetBlockAvgTimeQuery(c *gin.Context) (string, error) {
 		},
 		"size" : 1000,
 		"sort": [{"block.header.height": {"order": "asc"}}]
-	}`, params.Height), nil
+	}`, uri.Height), nil
 }
 
 func GetBlocksQuery(c *gin.Context) (string, error) {
-	params := &GetBlocksQueryParameter{}
-
-	if err := c.ShouldBindQuery(&params); err != nil {
-		return "", err
+	type GetBlocksPathParameter struct {
+		From string `uri:"from" binding:"required,gte=1"`
+		To   string `uri:"to" binding:"required,gte=1"`
 	}
-	if params.Order == "" {
-		params.Order = "desc"
+	type GetBlocksQueryParameter struct {
+		Order string `form:"order"`
+	}
+
+	uri := &GetBlocksPathParameter{}
+	query := &GetBlocksQueryParameter{}
+
+	if err := glib.ValidateRequestParameters(c, &uri, query); err != nil {
+		return "", err
 	}
 
 	return fmt.Sprintf(`{
@@ -102,5 +126,5 @@ func GetBlocksQuery(c *gin.Context) (string, error) {
 		"sort" : [
 			{"block.header.height" : {"order" : "%s"}}
 	   	]
-	}`, params.From, params.To, params.Order), nil
+	}`, uri.From, uri.To, c.DefaultQuery("order", "desc")), nil
 }

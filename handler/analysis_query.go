@@ -4,49 +4,50 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	glib "github.com/initia-labs/initia-apis/lib"
 )
 
-type GetTxVolumeQueryParameter struct {
-	From string `form:"from" binding:"required,gte=1"`
-	To   string `form:"to" binding:"required,gte=1"`
-	View string `form:"view"`
-}
-
-type GetTxCountQueryParameter struct {
-	From string `form:"from" binding:"required,gte=1"`
-	To   string `form:"to" binding:"required,gte=1"`
-}
-
 func GetTxVolumeQuery(c *gin.Context) (string, error) {
-	params := &GetTxVolumeQueryParameter{}
-
-	if err := c.ShouldBindQuery(&params); err != nil {
-		return "", err
+	type GetTxVolumePathParameter struct {
+		Start string `uri:"start" binding:"required"`
+		End   string `uri:"end" binding:"required"`
 	}
+	uri := &GetTxVolumePathParameter{}
 
-	// TODO: define tx volume
-	if params.View == "periodic" {
-		return "", nil
-	} else {
-		return "", nil
-	}
-}
-
-func GetTxCountQuery(c *gin.Context) (string, error) {
-	params := &GetTxCountQueryParameter{}
-
-	if err := c.ShouldBindQuery(&params); err != nil {
+	if err := glib.ValidateRequestParameters(c, &uri, nil); err != nil {
 		return "", err
 	}
 
 	return fmt.Sprintf(`{
 		"query": {
 			"range": {
-				"height": {
-					"gte": %s,
-					"lte": %s
+				"timestamp": {
+					"gte": "%s",
+					"lt": "%s"
 				}
 			}
 		}
-	}`, params.From, params.To), nil
+	}`, uri.Start, uri.End), nil
+}
+
+func GetTxCountQuery(c *gin.Context) (string, error) {
+	type GetTxCountPathParameter struct {
+		Start string `uri:"start" binding:"required"`
+		End   string `uri:"end" binding:"required"`
+	}
+	uri := &GetTxCountPathParameter{}
+	if err := glib.ValidateRequestParameters(c, &uri, nil); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf(`{
+		"query": {
+			"range": {
+				"timestamp": {
+					"gt": "%s",
+					"lt": "%s"
+				}
+			}
+		}
+	}`, uri.Start, uri.End), nil
 }

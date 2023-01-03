@@ -19,9 +19,9 @@ var _ = &tm.Block{}
 // @Description Get a transaction matching with given hash
 // @Accept  json
 // @Produce  json
-// @Param  hash	query	string	true	"Transaction hash"
+// @Param  hash	path  string	true	"transaction hash"
 // @Success 200 {object} gmodel.CollectedTx "a transaction"
-// @Router /v1/tx/:hash [get]
+// @Router /v1/tx/{hash} [get]
 func GetTxByHash(c *gin.Context) {
 	tx, err := ghandler.GetTxByHash(c, gconfig.IDX_TX_BASIC)
 	glib.Render(c, tx, err)
@@ -31,35 +31,38 @@ func GetTxByHash(c *gin.Context) {
 // @Description Get transactions related with given account address
 // @Accept  json
 // @Produce  json
-// @Param  limit  query  int  false  "Items per page (default: 10)"
-// @Param  order  query  string  false  "desc or asc (default: desc)"
+// @Param  account  path  string true  "account address"
+// @Param  limit  query  int  false  "a limited number of records" default(10000)
+// @Param  order  query  string  false  "desc or asc" default(desc)
 // @Success 200 {object} gmodel.CollectedTxs "List of transactions"
-// @Router /v1/txs/account/:account [get]
+// @Router /v1/txs/account/{account} [get]
 func GetTxsByAccount(c *gin.Context) {
 	txs, err := ghandler.GetTxsByAccount(c, gconfig.IDX_TX_BASIC)
 	glib.Render(c, txs, err)
 }
 
 // @Summary Get txs
-// @Description Get transactions from given offset
+// @Description Get transactions from given offset. If offset is 0, it returns all transactions.
 // @Accept  json
 // @Produce  json
-// @Param  limit  query  int  false  "Items per page (default: 10)"
+// @Param  offset  path  int true  "offset to skip items"
+// @Param  limit  query  int  false  "a limited number of records" default(10000)
 // @Success 200 {object} gmodel.CollectedTxs "List of transactions"
-// @Router /v1/txs/offset/:offset [get]
+// @Router /v1/txs/offset/{offset} [get]
 func GetTxsByOffset(c *gin.Context) {
 	txs, err := ghandler.GetTxsByOffset(c, gconfig.IDX_TX_BASIC)
 	glib.Render(c, txs, err)
 }
 
 // @Summary Get txs
-// @Description Get transactions
+// @Description Get transactions from given block height
 // @Accept  json
 // @Produce  json
-// @Param  limit  query  int  false  "Items per page (default: 10)"
-// @Param  order  query  string  false  "desc or asc (default: desc)"
+// @Param  height  path  int true  "block height" mininum(1)
+// @Param  limit  query  int  false  "a limited number of records" default(10000)
+// @Param  order  query  string  false  "desc or asc" default(desc)
 // @Success 200 {object} gmodel.CollectedTxs "List of transactions"
-// @Router /v1/txs/height/:height [get]
+// @Router /v1/txs/height/{height} [get]
 func GetTxsByHeight(c *gin.Context) {
 	txs, err := ghandler.GetTxsByHeight(c, gconfig.IDX_TX_BASIC)
 	glib.Render(c, txs, err)

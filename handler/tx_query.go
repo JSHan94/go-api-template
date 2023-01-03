@@ -4,11 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	glib "github.com/initia-labs/initia-apis/lib"
 )
-
-type GetTxQueryParameter struct {
-	Hash string `form:"hash" binding:"required"`
-}
 
 type GetTxsQueryParameter struct {
 	Limit string `form:"limit"`
@@ -16,25 +13,34 @@ type GetTxsQueryParameter struct {
 }
 
 func GetTxByHashQuery(c *gin.Context) (string, error) {
-	hash := c.Param("hash")
+	type GetTxByHashPathParameter struct {
+		Hash string `uri:"hash" binding:"required"`
+	}
+
+	uri := &GetTxByHashPathParameter{}
+
+	if err := glib.ValidateRequestParameters(c, &uri, nil); err != nil {
+		return "", err
+	}
+
 	return fmt.Sprintf(`{
 		"query": {
 			"match" : {
 				"txhash": "%s"
 			}
 		}
-	}`, hash), nil
+	}`, uri.Hash), nil
 }
 
 func GetTxsByOffsetQuery(c *gin.Context) (string, error) {
-	offset := c.Param("offset")
-	params := &GetTxsQueryParameter{}
-	if err := c.ShouldBindQuery(&params); err != nil {
-		return "", err
+	type GetTxsByOffsetPathParameter struct {
+		Offset string `uri:"offset" binding:"required,gte=0"`
 	}
 
-	if params.Limit == "" {
-		params.Limit = "10"
+	uri := &GetTxsByOffsetPathParameter{}
+	query := &GetTxsQueryParameter{}
+	if err := glib.ValidateRequestParameters(c, &uri, &query); err != nil {
+		return "", err
 	}
 
 	// allow only asc order
@@ -45,22 +51,17 @@ func GetTxsByOffsetQuery(c *gin.Context) (string, error) {
 		"sort": [{"sequence": {"order": "asc"}}],
 		"search_after": [%s],
 		"size" : %s
-	}`, offset, params.Limit), nil
+	}`, uri.Offset, c.DefaultQuery("limit", "10000")), nil
 }
 
 func GetTxsByAccountQuery(c *gin.Context) (string, error) {
-	account := c.Param("account")
-	params := &GetTxsQueryParameter{}
-	if err := c.ShouldBindQuery(&params); err != nil {
+	type GetTxsByAccountPathParameter struct {
+		Account string `uri:"account" binding:"required"`
+	}
+	uri := &GetTxsByAccountPathParameter{}
+	query := &GetTxsQueryParameter{}
+	if err := glib.ValidateRequestParameters(c, &uri, &query); err != nil {
 		return "", err
-	}
-
-	if params.Order == "" {
-		params.Order = "desc"
-	}
-
-	if params.Limit == "" {
-		params.Limit = "10"
 	}
 
 	return fmt.Sprintf(`{
@@ -72,31 +73,26 @@ func GetTxsByAccountQuery(c *gin.Context) (string, error) {
 		},
 		"sort": [{"sequence": {"order": "%s"}}],
 		"size" : %s
-	}`, account, params.Order, params.Limit), nil
+	}`, uri.Account, c.DefaultQuery("order", "desc"), c.DefaultQuery("limit", "10000")), nil
 }
 
 func GetTxsByHeightQuery(c *gin.Context) (string, error) {
-	height := c.Param("height")
-	params := &GetTxsQueryParameter{}
-	if err := c.ShouldBindQuery(&params); err != nil {
+	type GetTxsByHeightPathParameter struct {
+		Height string `uri:"height" binding:"required,gte=1"`
+	}
+	uri := &GetTxsByHeightPathParameter{}
+	query := &GetTxsQueryParameter{}
+	if err := glib.ValidateRequestParameters(c, &uri, &query); err != nil {
 		return "", err
-	}
-
-	if params.Order == "" {
-		params.Order = "desc"
-	}
-
-	if params.Limit == "" {
-		params.Limit = "10"
 	}
 
 	return fmt.Sprintf(`{
 		"query": {
 			"match" : {
-				"height": "%s"
+				"height": %s
 			}
 		},
 		"sort": [{"sequence": {"order": "%s"}}],
 		"size": %s
-	}`, height, params.Order, params.Limit), nil
+	}`, uri.Height, c.DefaultQuery("order", "desc"), c.DefaultQuery("limit", "10000")), nil
 }

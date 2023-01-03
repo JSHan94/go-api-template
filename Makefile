@@ -4,7 +4,7 @@ BINARY_NAME = initia-apis
 
 all: clean docs build run
 
-build: docs
+build:
 	@go build -o build/${BINARY_NAME} main.go
 
 run:
