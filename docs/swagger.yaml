@@ -362,9 +362,9 @@ paths:
       - application/json
       description: Get mempool transactions
       parameters:
-      - description: Account address
+      - description: chain id (defaultly, mainnet)
         in: query
-        name: account
+        name: chainid
         type: string
       produces:
       - application/json

@@ -33,12 +33,15 @@ func GetTxByHashQuery(c *gin.Context) (string, error) {
 }
 
 func GetTxsByOffsetQuery(c *gin.Context) (string, error) {
+	// to use gte=0, don't use required binding
+	// https://github.com/gin-gonic/gin/issues/1246
 	type GetTxsByOffsetPathParameter struct {
-		Offset string `uri:"offset" binding:"required,gte=0"`
+		Offset int64 `uri:"offset" binding:"gte=0"`
 	}
 
 	uri := &GetTxsByOffsetPathParameter{}
 	query := &GetTxsQueryParameter{}
+
 	if err := glib.ValidateRequestParameters(c, &uri, &query); err != nil {
 		return "", err
 	}
@@ -49,7 +52,7 @@ func GetTxsByOffsetQuery(c *gin.Context) (string, error) {
 			"match_all" : {}
 		},
 		"sort": [{"sequence": {"order": "asc"}}],
-		"search_after": [%s],
+		"search_after": [%d],
 		"size" : %s
 	}`, uri.Offset, c.DefaultQuery("limit", "10000")), nil
 }
@@ -78,7 +81,7 @@ func GetTxsByAccountQuery(c *gin.Context) (string, error) {
 
 func GetTxsByHeightQuery(c *gin.Context) (string, error) {
 	type GetTxsByHeightPathParameter struct {
-		Height string `uri:"height" binding:"required,gte=1"`
+		Height uint64 `uri:"height" binding:"required,gte=1"`
 	}
 	uri := &GetTxsByHeightPathParameter{}
 	query := &GetTxsQueryParameter{}
@@ -89,7 +92,7 @@ func GetTxsByHeightQuery(c *gin.Context) (string, error) {
 	return fmt.Sprintf(`{
 		"query": {
 			"match" : {
-				"height": %s
+				"height": %d
 			}
 		},
 		"sort": [{"sequence": {"order": "%s"}}],

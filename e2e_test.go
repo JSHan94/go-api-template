@@ -55,7 +55,8 @@ func TestGetBlock(t *testing.T) {
 		{"get block avgtime", "/v1/block/avgtime/100", http.StatusOK},
 		// Test GetBlocks
 		{"get blocks with range", "/v1/blocks/1/100", http.StatusOK},
-		{"get blocks with worng range", "/v1/blocks/100/1", http.StatusOK},
+		{"get blocks with range no result", "/v1/blocks/100/1", http.StatusOK},
+		{"get blocks with wrong range", "/v1/blocks/-1/1", http.StatusBadRequest},
 	}
 	for _, tc := range testCases {
 		w := httptest.NewRecorder()
@@ -76,9 +77,11 @@ func TestGetTx(t *testing.T) {
 		// Test GetTxsByHeight
 		{"get txs by height", "/v1/txs/height/" + HEIGHT_WITH_TX, http.StatusOK},
 		{"get txs by height without txs", "/v1/txs/height/" + HEIGHT_WITHOUT_TX, http.StatusOK},
+		{"get txs by wrong height", "/v1/txs/height/-1", http.StatusBadRequest},
 		// Test GetTxsByOffset
-		{"get txs by offset 3", "/v1/txs/offset/3", http.StatusOK},
 		{"get txs by offset 0", "/v1/txs/offset/0", http.StatusOK},
+		{"get txs by offset 0 with limit", "/v1/txs/offset/0?limit=5", http.StatusOK},
+		{"get txs by offset -1", "/v1/txs/offset/-1", http.StatusBadRequest},
 		{"get mempool txs", "/v1/txs/mempool", http.StatusOK},
 	}
 	for _, tc := range testCases {

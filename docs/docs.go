@@ -429,8 +429,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Account address",
-                        "name": "account",
+                        "description": "chain id (defaultly, mainnet)",
+                        "name": "chainid",
                         "in": "query"
                     }
                 ],
