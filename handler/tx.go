@@ -85,3 +85,20 @@ func GetTxsByOffset(c *gin.Context, indexName string) (*gmodel.CollectedTxs, err
 	txs.Offset = c.Param("offset")
 	return txs, err
 }
+
+// mempool
+func GetMempoolTxs(c *gin.Context) (*gmodel.MempoolTransactions, error) {
+	chainURL, chainID, err := glib.GetChainURLAndID(c)
+	if err != nil {
+		return nil, err
+	}
+
+	unconfirmedTxs, err := glib.GetUnconfirmedTxs(chainURL)
+	if err != nil {
+		return nil, err
+	}
+
+	memTxs := &unconfirmedTxs.Result
+	memTxs.ChainID = chainID
+	return memTxs, nil
+}

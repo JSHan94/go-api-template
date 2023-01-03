@@ -2,14 +2,11 @@ package lib
 
 import (
 	"encoding/json"
-
-	"github.com/sirupsen/logrus"
 )
 
 func decode(source interface{}, result interface{}) error {
 	sourceString, err := json.Marshal(source)
 	if err != nil {
-		logrus.Error(err)
 		return err
 	}
 	return json.Unmarshal(sourceString, &result)

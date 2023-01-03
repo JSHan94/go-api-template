@@ -45,7 +45,7 @@ func activateAPI(engine *gin.Engine) {
 			txs.GET("/account/:account", gcontroller.GetTxsByAccount)
 			txs.GET("/offset/:offset", gcontroller.GetTxsByOffset)
 
-			// txs.GET("/mempool", gcontroller.GetMempoolTxs)
+			txs.GET("/mempool", gcontroller.GetMempoolTxs)
 			txs.GET("/gasprice", gcontroller.GetGasPrice)
 		}
 

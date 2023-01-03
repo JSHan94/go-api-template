@@ -404,6 +404,34 @@
                 }
             }
         },
+        "/v1/txs/mempool": {
+            "get": {
+                "description": "Get mempool transactions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get mempool transactions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account address",
+                        "name": "account",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mempool transactions",
+                        "schema": {
+                            "type": "obejct"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/txs/offset/{offset}": {
             "get": {
                 "description": "Get transactions from given offset. If offset is 0, it returns all transactions.",

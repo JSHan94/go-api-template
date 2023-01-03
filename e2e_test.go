@@ -79,6 +79,7 @@ func TestGetTx(t *testing.T) {
 		// Test GetTxsByOffset
 		{"get txs by offset 3", "/v1/txs/offset/3", http.StatusOK},
 		{"get txs by offset 0", "/v1/txs/offset/0", http.StatusOK},
+		{"get mempool txs", "/v1/txs/mempool", http.StatusOK},
 	}
 	for _, tc := range testCases {
 		w := httptest.NewRecorder()

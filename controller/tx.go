@@ -82,24 +82,14 @@ func GetGasPrice(c *gin.Context) {
 	glib.Render(c, gasPrice, nil)
 }
 
-// // @Summary Get mempool transaction
-// // @Description Get mempool transaction with txhash
-// // @Accept  json
-// // @Produce  json
-// // @Param  txhash  query  string  true  "Transaction hash"
-// // @Success 200 {obejct} gmodel.MempoolTransaction "Mempool transaction"
-// // @Router /v1/tx/mempool [get]
-// func GetMempoolTx(c *gin.Context) {
-// 	panic("not implemented yet")
-// }
-
-// // @Summary Get mempool transactions
-// // @Description Get mempool transactions
-// // @Accept  json
-// // @Produce  json
-// // @Param  account  query  string  false  "Account address"
-// // @Success 200 {obejct} gmodel.MempoolTransactions "Mempool transactions"
-// // @Router /v1/txs/mempool [get]
-// func GetMempoolTxs(c *gin.Context) {
-// 	panic("not implemented yet")
-// }
+// @Summary Get mempool transactions
+// @Description Get mempool transactions
+// @Accept  json
+// @Produce  json
+// @Param  chainid  query  string  false  "chain id (defaultly, mainnet)"
+// @Success 200 {obejct} gmodel.MempoolTransactions "Mempool transactions"
+// @Router /v1/txs/mempool [get]
+func GetMempoolTxs(c *gin.Context) {
+	txs, err := ghandler.GetMempoolTxs(c)
+	glib.Render(c, txs, err)
+}

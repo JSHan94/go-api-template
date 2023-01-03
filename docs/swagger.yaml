@@ -356,6 +356,24 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedTxs'
       summary: Get txs
+  /v1/txs/mempool:
+    get:
+      consumes:
+      - application/json
+      description: Get mempool transactions
+      parameters:
+      - description: Account address
+        in: query
+        name: account
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mempool transactions
+          schema:
+            type: obejct
+      summary: Get mempool transactions
   /v1/txs/offset/{offset}:
     get:
       consumes:

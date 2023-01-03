@@ -13,6 +13,7 @@ var configAll *Configuration
 type Configuration struct {
 	Database *DatabaseConfig
 	Server   *ServerConfig
+	Chain    *ChainConfig
 }
 
 func GetConfig() *Configuration {
@@ -42,6 +43,7 @@ func Config() *Configuration {
 
 	configuration.Database = database()
 	configuration.Server = server()
+	configuration.Chain = chain()
 
 	configAll = &configuration
 
