@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	gconfig "github.com/initia-labs/initia-apis/config"
 	gmodel "github.com/initia-labs/initia-apis/database/model"
-	"github.com/sirupsen/logrus"
 )
 
 func GetChainURLAndID(c *gin.Context) (string, string, error) {
@@ -25,14 +24,12 @@ func GetChainURLAndID(c *gin.Context) (string, string, error) {
 func GetUnconfirmedTxs(chainURL string) (*gmodel.UnconfirmedTxsResult, error) {
 	response, err := http.Get(chainURL + ":26657/unconfirmed_txs?limit=10000")
 	if err != nil {
-		logrus.Info(err)
 		return nil, err
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		logrus.Info(err)
 		return nil, err
 	}
 
