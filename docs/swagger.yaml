@@ -1,0 +1,402 @@
+definitions:
+  model.BlockAvgTime:
+    properties:
+      avgtime:
+        type: number
+    type: object
+  model.CollectedBlock:
+    properties:
+      block:
+        type: object
+      block_id:
+        type: object
+    type: object
+  model.CollectedBlocks:
+    properties:
+      blocks:
+        items:
+          $ref: '#/definitions/model.CollectedBlock'
+        type: array
+      from:
+        type: string
+      to:
+        type: string
+    type: object
+  model.CollectedTx:
+    properties:
+      code:
+        type: integer
+      codespace:
+        type: string
+      gas_used:
+        type: integer
+      gas_wanted:
+        type: integer
+      height:
+        type: integer
+      index:
+        description: tx order in a block
+        type: integer
+      logs:
+        type: string
+      raw_log:
+        type: string
+      sequence:
+        description: sequence of whole txs, not sender's sequence
+        type: integer
+      timestamp:
+        type: string
+      tx:
+        type: string
+      tx_response:
+        type: string
+      txhash:
+        type: string
+    type: object
+  model.CollectedTxs:
+    properties:
+      limit:
+        type: string
+      offset:
+        type: string
+      txs:
+        items:
+          $ref: '#/definitions/model.CollectedTx'
+        type: array
+    type: object
+  model.TxCount:
+    properties:
+      end:
+        type: string
+      start:
+        type: string
+      value:
+        type: integer
+    type: object
+  model.TxVolume:
+    properties:
+      denom:
+        type: string
+      end:
+        type: string
+      start:
+        type: string
+      value:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/analysis/tx-count/{start}/{end}:
+    get:
+      consumes:
+      - application/json
+      description: Get tx count for a given time range
+      parameters:
+      - description: start time
+        example: 2022-11-08T19:47:10
+        in: path
+        name: start
+        required: true
+        type: string
+      - description: end time
+        example: 2022-11-18T20:47:10
+        in: path
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: tx count
+          schema:
+            $ref: '#/definitions/model.TxCount'
+      summary: Get tx count
+  /v1/analysis/tx-volume/{start}/{end}:
+    get:
+      consumes:
+      - application/json
+      description: Get transaction volume for a given time range
+      parameters:
+      - description: start time
+        example: 2022-11-08T19:47:10
+        in: path
+        name: start
+        required: true
+        type: string
+      - description: end time
+        example: 2022-11-18T20:47:10
+        in: path
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: tx volume
+          schema:
+            $ref: '#/definitions/model.TxVolume'
+      summary: Get tx volume
+  /v1/block/avgtime/{height}:
+    get:
+      consumes:
+      - application/json
+      description: Get average time of the previous 1000 blocks. If you give block
+        height as 4500, it will give average time of blocks 3500 to 4500.
+      parameters:
+      - description: block height
+        in: path
+        minimum: 2
+        name: height
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: average blocktime
+          schema:
+            $ref: '#/definitions/model.BlockAvgTime'
+      summary: Get average blocktime
+  /v1/block/hash/{hash}:
+    get:
+      consumes:
+      - application/json
+      description: Get block information for a given hash
+      parameters:
+      - description: block hash
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: block
+          schema:
+            $ref: '#/definitions/model.CollectedBlock'
+      summary: Get block by hash
+  /v1/block/height/{height}:
+    get:
+      consumes:
+      - application/json
+      description: Get block information for a given height
+      parameters:
+      - description: block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: block
+          schema:
+            $ref: '#/definitions/model.CollectedBlock'
+      summary: Get block by height
+  /v1/block/latest:
+    get:
+      consumes:
+      - application/json
+      description: Get latest block
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: block
+          schema:
+            $ref: '#/definitions/model.CollectedBlock'
+      summary: Get latest block
+  /v1/block/time/{time}:
+    get:
+      consumes:
+      - application/json
+      description: Get a latest block information for a given time (yyyy-mm-ddTHH:MM:SS)
+      parameters:
+      - description: time
+        example: 2022-11-08T19:47:10
+        in: path
+        name: time
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: block
+          schema:
+            $ref: '#/definitions/model.CollectedBlock'
+      summary: Get block by time
+  /v1/blocks/{from}/{to}:
+    get:
+      consumes:
+      - application/json
+      description: Get blocks information for a given range
+      parameters:
+      - description: start height
+        in: path
+        name: from
+        required: true
+        type: integer
+      - description: end height
+        in: path
+        name: to
+        required: true
+        type: integer
+      - default: 10
+        description: a limited number of records
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        description: desc or asc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: blocks
+          schema:
+            $ref: '#/definitions/model.CollectedBlocks'
+      summary: Get blocks
+  /v1/tx/{hash}:
+    get:
+      consumes:
+      - application/json
+      description: Get a transaction matching with given hash
+      parameters:
+      - description: transaction hash
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: a transaction
+          schema:
+            $ref: '#/definitions/model.CollectedTx'
+      summary: Get a tx
+  /v1/txs/account/{account}:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions related with given account address
+      parameters:
+      - description: account address
+        in: path
+        name: account
+        required: true
+        type: string
+      - default: 10000
+        description: a limited number of records
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        description: desc or asc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions
+          schema:
+            $ref: '#/definitions/model.CollectedTxs'
+      summary: Get txs
+  /v1/txs/gasprice:
+    get:
+      consumes:
+      - application/json
+      description: Get minimum gas price
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: uinit minimum gas price
+          schema:
+            type: obejct
+      summary: Get gas price
+  /v1/txs/height/{height}:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions from given block height
+      parameters:
+      - description: block height
+        in: path
+        name: height
+        required: true
+        type: integer
+      - default: 10000
+        description: a limited number of records
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        description: desc or asc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions
+          schema:
+            $ref: '#/definitions/model.CollectedTxs'
+      summary: Get txs
+  /v1/txs/mempool:
+    get:
+      consumes:
+      - application/json
+      description: Get mempool transactions
+      parameters:
+      - description: chain id (defaultly, mainnet)
+        in: query
+        name: chainid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Mempool transactions
+          schema:
+            type: obejct
+      summary: Get mempool transactions
+  /v1/txs/offset/{offset}:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions from given offset. If offset is 0, it returns
+        all transactions.
+      parameters:
+      - description: offset to skip items
+        in: path
+        name: offset
+        required: true
+        type: integer
+      - default: 10000
+        description: a limited number of records
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions
+          schema:
+            $ref: '#/definitions/model.CollectedTxs'
+      summary: Get txs
+swagger: "2.0"

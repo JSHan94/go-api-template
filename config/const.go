@@ -10,3 +10,8 @@ const (
 	IDX_NETWORK_BASIC = "initia-network-idx-1"
 	IDX_GENERAL_BASIC = "initia-general-idx-1"
 )
+
+const (
+	NATIVE_TOKEN_SYMBOL = "uinit"
+	MIN_GAS_PRICE       = "0.15"
+)

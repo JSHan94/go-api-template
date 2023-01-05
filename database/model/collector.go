@@ -83,7 +83,6 @@ type TxRecord struct {
 }
 
 type CollectedAppendix struct {
-	indexBytes      []byte             // internal use only
 	StakingRatio    sdk.Dec            `json:"staking_ratio"`
 	Issuances       sdk.Coins          `json:"issuances"`
 	CommunityPool   sdk.DecCoins       `json:"community_pool"`
