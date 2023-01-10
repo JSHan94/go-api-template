@@ -27,7 +27,7 @@ clean:
 
 #### docker ####
 
-docker-build:
+docker-build: clean docs
 	@docker rmi -f initia-apis
 	@docker build --no-cache --tag initia-apis ./
 

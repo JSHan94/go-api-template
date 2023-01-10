@@ -10,6 +10,7 @@ import (
 
 var _ = &gmodel.CollectedBlock{}
 
+// @Tags block
 // @Summary Get latest block
 // @Description Get latest block
 // @Accept  json
@@ -21,6 +22,7 @@ func GetBlockLatest(c *gin.Context) {
 	glib.Render(c, block, err)
 }
 
+// @Tags block
 // @Summary Get block by height
 // @Description Get block information for a given height
 // @Accept  json
@@ -33,6 +35,7 @@ func GetBlockByHeight(c *gin.Context) {
 	glib.Render(c, block, err)
 }
 
+// @Tags block
 // @Summary Get block by hash
 // @Description Get block information for a given hash
 // @Accept  json
@@ -45,6 +48,7 @@ func GetBlockByHash(c *gin.Context) {
 	glib.Render(c, block, err)
 }
 
+// @Tags block
 // @Summary Get block by time
 // @Description Get a latest block information for a given time (yyyy-mm-ddTHH:MM:SS)
 // @Accept  json
@@ -57,6 +61,7 @@ func GetBlockByTime(c *gin.Context) {
 	glib.Render(c, block, err)
 }
 
+// @Tags block
 // @Summary Get average blocktime
 // @Description Get average time of the previous 1000 blocks. If you give block height as 4500, it will give average time of blocks 3500 to 4500.
 // @Accept  json
@@ -69,6 +74,7 @@ func GetBlockAvgTime(c *gin.Context) {
 	glib.Render(c, blockAvgTime, err)
 }
 
+// @Tags block
 // @Summary Get blocks
 // @Description Get blocks information for a given range
 // @Accept  json

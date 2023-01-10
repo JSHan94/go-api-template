@@ -113,6 +113,8 @@ paths:
           schema:
             $ref: '#/definitions/model.TxCount'
       summary: Get tx count
+      tags:
+      - analysis
   /v1/analysis/tx-volume/{start}/{end}:
     get:
       consumes:
@@ -139,6 +141,8 @@ paths:
           schema:
             $ref: '#/definitions/model.TxVolume'
       summary: Get tx volume
+      tags:
+      - analysis
   /v1/block/avgtime/{height}:
     get:
       consumes:
@@ -160,6 +164,8 @@ paths:
           schema:
             $ref: '#/definitions/model.BlockAvgTime'
       summary: Get average blocktime
+      tags:
+      - block
   /v1/block/hash/{hash}:
     get:
       consumes:
@@ -179,6 +185,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedBlock'
       summary: Get block by hash
+      tags:
+      - block
   /v1/block/height/{height}:
     get:
       consumes:
@@ -199,6 +207,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedBlock'
       summary: Get block by height
+      tags:
+      - block
   /v1/block/latest:
     get:
       consumes:
@@ -212,6 +222,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedBlock'
       summary: Get latest block
+      tags:
+      - block
   /v1/block/time/{time}:
     get:
       consumes:
@@ -232,6 +244,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedBlock'
       summary: Get block by time
+      tags:
+      - block
   /v1/blocks/{from}/{to}:
     get:
       consumes:
@@ -266,6 +280,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedBlocks'
       summary: Get blocks
+      tags:
+      - block
   /v1/tx/{hash}:
     get:
       consumes:
@@ -285,6 +301,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedTx'
       summary: Get a tx
+      tags:
+      - transaction
   /v1/txs/account/{account}:
     get:
       consumes:
@@ -314,6 +332,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedTxs'
       summary: Get txs
+      tags:
+      - transaction
   /v1/txs/gasprice:
     get:
       consumes:
@@ -327,6 +347,8 @@ paths:
           schema:
             type: obejct
       summary: Get gas price
+      tags:
+      - transaction
   /v1/txs/height/{height}:
     get:
       consumes:
@@ -356,6 +378,8 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedTxs'
       summary: Get txs
+      tags:
+      - transaction
   /v1/txs/mempool:
     get:
       consumes:
@@ -374,6 +398,8 @@ paths:
           schema:
             type: obejct
       summary: Get mempool transactions
+      tags:
+      - transaction
   /v1/txs/offset/{offset}:
     get:
       consumes:
@@ -399,4 +425,6 @@ paths:
           schema:
             $ref: '#/definitions/model.CollectedTxs'
       summary: Get txs
+      tags:
+      - transaction
 swagger: "2.0"

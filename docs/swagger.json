@@ -13,6 +13,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "analysis"
+                ],
                 "summary": "Get tx count",
                 "parameters": [
                     {
@@ -50,6 +53,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "analysis"
                 ],
                 "summary": "Get tx volume",
                 "parameters": [
@@ -89,6 +95,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "block"
+                ],
                 "summary": "Get average blocktime",
                 "parameters": [
                     {
@@ -119,6 +128,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "block"
+                ],
                 "summary": "Get block by hash",
                 "parameters": [
                     {
@@ -147,6 +159,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "block"
                 ],
                 "summary": "Get block by height",
                 "parameters": [
@@ -178,6 +193,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "block"
+                ],
                 "summary": "Get latest block",
                 "responses": {
                     "200": {
@@ -197,6 +215,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "block"
                 ],
                 "summary": "Get block by time",
                 "parameters": [
@@ -227,6 +248,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "block"
                 ],
                 "summary": "Get blocks",
                 "parameters": [
@@ -278,6 +302,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "transaction"
+                ],
                 "summary": "Get a tx",
                 "parameters": [
                     {
@@ -306,6 +333,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "transaction"
                 ],
                 "summary": "Get txs",
                 "parameters": [
@@ -350,6 +380,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "transaction"
+                ],
                 "summary": "Get gas price",
                 "responses": {
                     "200": {
@@ -369,6 +402,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "transaction"
                 ],
                 "summary": "Get txs",
                 "parameters": [
@@ -413,6 +449,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "transaction"
+                ],
                 "summary": "Get mempool transactions",
                 "parameters": [
                     {
@@ -440,6 +479,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "transaction"
                 ],
                 "summary": "Get txs",
                 "parameters": [

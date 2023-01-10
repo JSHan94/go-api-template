@@ -25,6 +25,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "analysis"
+                ],
                 "summary": "Get tx count",
                 "parameters": [
                     {
@@ -62,6 +65,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "analysis"
                 ],
                 "summary": "Get tx volume",
                 "parameters": [
@@ -101,6 +107,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "block"
+                ],
                 "summary": "Get average blocktime",
                 "parameters": [
                     {
@@ -131,6 +140,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "block"
+                ],
                 "summary": "Get block by hash",
                 "parameters": [
                     {
@@ -159,6 +171,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "block"
                 ],
                 "summary": "Get block by height",
                 "parameters": [
@@ -190,6 +205,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "block"
+                ],
                 "summary": "Get latest block",
                 "responses": {
                     "200": {
@@ -209,6 +227,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "block"
                 ],
                 "summary": "Get block by time",
                 "parameters": [
@@ -239,6 +260,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "block"
                 ],
                 "summary": "Get blocks",
                 "parameters": [
@@ -290,6 +314,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "transaction"
+                ],
                 "summary": "Get a tx",
                 "parameters": [
                     {
@@ -318,6 +345,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "transaction"
                 ],
                 "summary": "Get txs",
                 "parameters": [
@@ -362,6 +392,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "transaction"
+                ],
                 "summary": "Get gas price",
                 "responses": {
                     "200": {
@@ -381,6 +414,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "transaction"
                 ],
                 "summary": "Get txs",
                 "parameters": [
@@ -425,6 +461,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "transaction"
+                ],
                 "summary": "Get mempool transactions",
                 "parameters": [
                     {
@@ -452,6 +491,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "transaction"
                 ],
                 "summary": "Get txs",
                 "parameters": [

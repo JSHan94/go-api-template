@@ -11,6 +11,7 @@ import (
 var _ = &gmodel.TxVolume{}
 var _ = &gmodel.TxCount{}
 
+// @Tags analysis
 // @Summary Get tx volume
 // @Description Get transaction volume for a given time range
 // @Accept  json
@@ -24,6 +25,7 @@ func GetTxVolume(c *gin.Context) {
 	glib.Render(c, txVolume, err)
 }
 
+// @Tags analysis
 // @Summary Get tx count
 // @Description Get tx count for a given time range
 // @Accept  json

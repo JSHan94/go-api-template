@@ -15,6 +15,7 @@ var _ = &gmodel.CollectedTxs{}
 var _ = &tm.BlockID{}
 var _ = &tm.Block{}
 
+// @Tags transaction
 // @Summary Get a tx
 // @Description Get a transaction matching with given hash
 // @Accept  json
@@ -27,6 +28,7 @@ func GetTxByHash(c *gin.Context) {
 	glib.Render(c, tx, err)
 }
 
+// @Tags transaction
 // @Summary Get txs
 // @Description Get transactions related with given account address
 // @Accept  json
@@ -41,6 +43,7 @@ func GetTxsByAccount(c *gin.Context) {
 	glib.Render(c, txs, err)
 }
 
+// @Tags transaction
 // @Summary Get txs
 // @Description Get transactions from given offset. If offset is 0, it returns all transactions.
 // @Accept  json
@@ -54,6 +57,7 @@ func GetTxsByOffset(c *gin.Context) {
 	glib.Render(c, txs, err)
 }
 
+// @Tags transaction
 // @Summary Get txs
 // @Description Get transactions from given block height
 // @Accept  json
@@ -68,6 +72,7 @@ func GetTxsByHeight(c *gin.Context) {
 	glib.Render(c, txs, err)
 }
 
+// @Tags transaction
 // @Summary Get gas price
 // @Description Get minimum gas price
 // @Accept  json
@@ -82,6 +87,7 @@ func GetGasPrice(c *gin.Context) {
 	glib.Render(c, gasPrice, nil)
 }
 
+// @Tags transaction
 // @Summary Get mempool transactions
 // @Description Get mempool transactions
 // @Accept  json
